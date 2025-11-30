@@ -10,14 +10,14 @@ public class PlayerMove : MonoBehaviour
     public float runSpeed;
 
     public float jumpPower;
-    private bool jumpRequest;
+    //private bool jumpRequest;
     
     //物理演算
     private Rigidbody2D rb;
 
     //トリガー
     private bool isGrounded;
-    public bool isDeat = false; //死亡判定
+    //private bool isDeat = false; //死亡判定
 
 
 
@@ -27,16 +27,6 @@ public class PlayerMove : MonoBehaviour
         startPosition = transform.position;
     }
 
-    private void FixedUpdate()
-    {
-        // ジャンプ実行（物理はFixedUpdate）
-        if (jumpRequest)
-        {
-            rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpPower);
-            jumpRequest = false;
-        }
-
-    }
 
     void Update()
     {
@@ -46,7 +36,8 @@ public class PlayerMove : MonoBehaviour
         //ジャンプ（Spaceキー）
         if ((Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0)) && isGrounded)
         {
-            jumpRequest = true;
+            // 上に力を加える
+            rb.AddForce(Vector2.up * jumpPower);
         }
     }
 
