@@ -44,6 +44,12 @@ public class PlayerMove : MonoBehaviour
             rb.AddForce(Vector2.up * jumpPower);
             AudioSource.PlayClipAtPoint(Junp, transform.position);
         }
+
+        //リセットキー
+        if (Input.GetKeyDown(KeyCode.F1))
+        {
+            OnRetry();
+        }
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -83,5 +89,11 @@ public class PlayerMove : MonoBehaviour
     {
         rb.linearVelocity = Vector2.zero;
         transform.position = startPosition;
+    }
+
+    //リセットキー
+    public void OnRetry()
+    {
+        SceneManager.LoadScene("InGame");
     }
 }
