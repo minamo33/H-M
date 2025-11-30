@@ -8,6 +8,7 @@ TagManager:
   - Obstacle
   - DedArea
   - Gool
+  - Coin
   layers:
   - Default
   - TransparentFX
