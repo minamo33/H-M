@@ -10,11 +10,8 @@ public class PlayerMove : MonoBehaviour
     public float runSpeed;
 
     public float jumpPower;
-    private bool jumpReqest;
+    private bool jumpRequest;
     
-    public float gravity;
-    private float verticalVelocity;
-
     //物理演算
     private Rigidbody2D rb;
 
@@ -27,26 +24,18 @@ public class PlayerMove : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        rb.gravityScale = 0;
-        rb.linearVelocity = Vector2.zero;
         startPosition = transform.position;
     }
 
     private void FixedUpdate()
     {
-        if (jumpReqest)
+        // ジャンプ実行（物理はFixedUpdate）
+        if (jumpRequest)
         {
-            verticalVelocity = jumpPower;
-            jumpReqest = false;
+            rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpPower);
+            jumpRequest = false;
         }
 
-        //重力処理
-        verticalVelocity += gravity * Time.deltaTime;
-
-        //y方向の移動
-        transform.position += new Vector3(0, verticalVelocity * Time.deltaTime, 0);
-
-        print(verticalVelocity);
     }
 
     void Update()
@@ -57,46 +46,33 @@ public class PlayerMove : MonoBehaviour
         //ジャンプ（Spaceキー）
         if ((Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0)) && isGrounded)
         {
-            jumpReqest = true;
+            jumpRequest = true;
         }
-        print(isGrounded);
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        print(collision.collider.name);
-        if (collision.collider.CompareTag("Ground"))
-        {
-            isGrounded = true;
-            verticalVelocity = 0f;//着地時に落下速度をリセット
-        }
-        else if (collision.collider.CompareTag("Obstacle"))
-        {
-            Dedrestart();
-        }
-        else if (collision.collider.CompareTag("DedArea"))
-        {
-            Dedrestart();
-        }
-        else if (collision.collider.CompareTag("Gool"))
-        {
-            SceneManager.LoadScene("Clear");
-        }
+        //デバッグログ
+        //print(collision.collider.name);
 
+        if (collision.collider.CompareTag("Obstacle"))  { Dedrestart();}
+        if (collision.collider.CompareTag("DedArea"))   { Dedrestart();}
+        if (collision.collider.CompareTag("Gool"))      { SceneManager.LoadScene("Clear"); }
 
+    }
+
+    private void OnCollisionStay2D(Collision2D collision)
+    {
+        if (collision.collider.CompareTag("Ground")){ isGrounded = true; }
     }
 
     private void OnCollisionExit2D(Collision2D collision)
     {
-        if (collision.collider.CompareTag("Ground"))
-        {
-            isGrounded = false;
-        }
+        if (collision.collider.CompareTag("Ground")){ isGrounded = false;}
     }
 
     private void Dedrestart()
     {
-        verticalVelocity = 0f;//着地時に落下速度をリセット
         rb.linearVelocity = Vector2.zero;
         transform.position = startPosition;
     }
